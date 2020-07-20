@@ -1,7 +1,7 @@
 USE [Relitix]
 GO
 
-/****** Object:  StoredProcedure [dbo].[rpt_CarolinaOneQuarterlyPriceRangeStatsTab]    Script Date: 5/19/2020 11:34:34 AM ******/
+/****** Object:  StoredProcedure [dbo].[rpt_CarolinaOneQuarterlyPriceRangeStatsTab]    Script Date: 7/20/2020 1:27:10 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,6 +9,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 
+-- ==============================================================================================
+-- Author:		Matt Michalowski
+-- Create date: 4/14/2020
+-- Description:	Carolina One Quarterly Stats - Market Area Tab
+
+--Changes:
+--7/12/2020: Added areas 74 and 78; added area number to area label	   
+
+-- ==============================================================================================
 CREATE PROCEDURE [dbo].[rpt_CarolinaOneQuarterlyPriceRangeStatsTab]
 --@PropertySubtype VARCHAR(255)
 	@eval_date DATE=NULL,
@@ -54,27 +63,29 @@ set @break3 = 1000000
 set @break4 = 1500000
 
 --Base table for inventory numbers
-select CASE WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23') THEN 'Johns Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51') THEN 'Downtown Inside Crosstown'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('52') THEN 'Downtown Charleston Above the Crosstown'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41') THEN 'North Mt. Pleasant'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('42') THEN 'South Mt. Pleasant'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('25') THEN 'Kiawah Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','28') THEN 'Edisto Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('27') THEN 'Edisto Beach'
+select CASE WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island (21)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23') THEN 'Johns Island (23)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley (11-12)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach (22)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51') THEN 'Downtown Inside Crosstown (51)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('52') THEN 'Downtown Charleston Above the Crosstown (52)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41') THEN 'North Mt. Pleasant (41)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('42') THEN 'South Mt. Pleasant (42)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston (31-32)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island (43)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms (44)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes (45)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('25') THEN 'Kiawah Island (25)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville (61-63)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek (72-73)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro (82)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','28') THEN 'Edisto Island (26 & 28)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('27') THEN 'Edisto Beach (27)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Nexton/Cane Bay Area (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 case  when lc.listprice  < @break1 then 1
 							when lc.listprice >= @break1 AND lc.listprice < @break2 then 2
@@ -92,7 +103,7 @@ Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.Sour
 			where 
 	lc.PropertyType='Residential'
 	--AND lc.PropertySubType='Single Family Residential'
-	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51','52', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '76', '71', '82', '26','27','28')
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51','52', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '76', '71', '82', '26','27','28','74','78')
 
 --UNION ALL
 
@@ -155,27 +166,29 @@ Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.Sour
 	and m.CountyOrParrish in ('Berkeley','Dorchester','Charleston')
 
 --Base table for Solds
-select CASE WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23') THEN 'Johns Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51') THEN 'Downtown Inside Crosstown'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('52') THEN 'Downtown Charleston Above the Crosstown'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41') THEN 'North Mt. Pleasant'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('42') THEN 'South Mt. Pleasant'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('25') THEN 'Kiawah Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','28') THEN 'Edisto Island'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('27') THEN 'Edisto Beach'
+select CASE WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island (21)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23') THEN 'Johns Island (23)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley (11-12)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach (22)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51') THEN 'Downtown Inside Crosstown (51)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('52') THEN 'Downtown Charleston Above the Crosstown (52)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41') THEN 'North Mt. Pleasant (41)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('42') THEN 'South Mt. Pleasant (42)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston (31-32)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island (43)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms (44)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes (45)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('25') THEN 'Kiawah Island (25)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville (61-63)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek (72-73)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro (82)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','28') THEN 'Edisto Island (26 & 28)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('27') THEN 'Edisto Beach (27)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Nexton/Cane Bay Area (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 --[Cumulative DOM],
 datediff(day,m.ListingContractDate,m.CloseDate) As [Cumulative DOM],
@@ -202,7 +215,7 @@ Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.Sour
 	lc.closedate IS NOT NULL
 	AND lc.PropertyType='Residential'
 	--AND lc.PropertySubType='Single Family Residential'
-	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51','52', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '76', '71', '82', '26','27','28')
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51','52', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '76', '71', '82', '26','27','28','74','78')
 
 --UNION ALL
 
@@ -515,6 +528,7 @@ order by listpricebucket
 
 
 END
+
 
 
 

@@ -3326,7 +3326,7 @@ DATEPART(Year,@eval_date)-1 As PrevReportYear</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Total Sales Volume" + vbcrlf + "Q" + CSTR(Parameters!ReportQtr.Value) + " " + CSTR(Parameters!PrevReportYear.Value)</Value>
+                                  <Value>="Total Sales Volume" + vbcrlf + "Q" + CSTR(Parameters!ReportQtr.Value) + " " + CSTR(Parameters!ReportYear.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -3425,7 +3425,7 @@ DATEPART(Year,@eval_date)-1 As PrevReportYear</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Months Inventory" + vbcrlf + "Q" + CSTR(Parameters!ReportQtr.Value) + " " + CSTR(Parameters!PrevReportYear.Value)</Value>
+                                  <Value>="Months Inventory" + vbcrlf + "Q" + CSTR(Parameters!ReportQtr.Value) + " " + CSTR(Parameters!ReportYear.Value)</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -3447,6 +3447,7 @@ DATEPART(Year,@eval_date)-1 As PrevReportYear</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -25180,7 +25181,7 @@ DATEPART(Year,@eval_date)-1 As PrevReportYear</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Code.GetValue(Sum(Fields!sales_count.Value),Fields!Municipality.Value,Fields!Yr.Value)</Value>
+                                  <Value>=Code.GetValue(Sum(Fields!sales_count.Value),Fields!Municipality.Value,Fields!Qtr.Value)</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>

@@ -170,7 +170,7 @@ SELECT '74' As Area,'74 - Jedburg Rd-Black Tom-Hwy 17A-Col Pk' As MLS_Name,'Jedb
 SELECT '75' As Area,'75 - Cross/St. Stephens/Bonneau' As MLS_Name,'Cross/St. Stephens/Bonneau' As ReportName UNION ALL
 SELECT '76' As Area,'76 - Moncks Corner Above Oakley Rd' As MLS_Name,'Moncks Corner' As ReportName UNION ALL
 SELECT '77' As Area,'77 - Daniel Island' As MLS_Name,'Daniel Island' As ReportName UNION ALL
-SELECT '78' As Area,'78 - Wando/Cainhoy' As MLS_Name,'Wando/Cainhoy' As ReportName
+SELECT '78' As Area,'78 - Clements Ferry Road/Cainhoy' As MLS_Name,'Clements Ferry Road/Cainhoy' As ReportName
 ) a
 
 
@@ -1467,7 +1467,7 @@ WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(ar
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('75') THEN 'Cross/St. Stephens/Bonneau (75)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Wando/Cainhoy (78)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 case  when lc.listprice  &lt; @break1_1 then 1
 							when lc.listprice &gt;= @break1_1 AND lc.listprice &lt; @break2_1 then 2
@@ -1529,7 +1529,7 @@ WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(ar
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('75') THEN 'Cross/St. Stephens/Bonneau (75)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
-WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Wando/Cainhoy (78)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 datediff(day,m.ListingContractDate,m.CloseDate) As [DOM],
 lc.*
@@ -2034,6 +2034,301 @@ order by Yr,Mo</CommandText>
         </Field>
         <Field Name="total_sold">
           <DataField>total_sold</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AbsorptionRateLuxury">
+      <Query>
+        <DataSourceName>Relitix</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@break0_2">
+            <Value>=Parameters!break0_2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@break1_2">
+            <Value>=Parameters!break1_2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@break2_2">
+            <Value>=Parameters!break2_2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@break3_2">
+            <Value>=Parameters!break3_2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@break4_2">
+            <Value>=Parameters!break4_2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@eval_date">
+            <Value>=Parameters!eval_date.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@CYEndDate">
+            <Value>=Parameters!CYEndDate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>DROP TABLE IF EXISTS #cte
+DROP TABLE IF EXISTS #inv
+DROP TABLE IF EXISTS #solds
+DROP TABLE IF EXISTS #DOM
+DROP TABLE IF EXISTS #work_lci
+
+--Base table for inventory numbers
+select CASE 
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley (11-12)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('13') THEN 'Ravenel/Hollywood/Meggett (13)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island (21)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach (22)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23','24','25','26','30') THEN 'West Islands (23-26,30)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston (31-32)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41','42') THEN 'Mt. Pleasant (41-42)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island (43)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms (44)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes (45)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('46','47') THEN 'Awendaw/McClellanville (46-47)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51','52') THEN 'Downtown Charleston (51-52)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville (61-63)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('64') THEN 'St. George &amp; Harleyville (64)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek (72-73)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Jedburg (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('75') THEN 'Cross/St. Stephens/Bonneau (75)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
+ELSE '' END As Area,
+case  when lc.listprice &gt;= @break0_2 AND lc.listprice &lt; @break1_2 then 1
+							when lc.listprice &gt;= @break1_2 AND lc.listprice &lt; @break2_2 then 2
+							when lc.listprice &gt;= @break2_2 AND lc.listprice &lt; @break3_2 then 3
+							when lc.listprice &gt;= @break3_2 AND lc.listprice &lt; @break4_2 then 4
+							when lc.listprice &gt;= @break4_2 then 5
+							else 0 end as listpricebucket,
+lc.Rtx_LC_ID,lc.StandardStatus,lc.ListingContractDate,lc.CloseDate,lc.ExpirationDate,lc.WithdrawnDate,lc.CancelationDate,lc.ClosePrice,lc.StatusChangeTimestamp
+INTO #work_lci
+from listings_combined lc
+	join listings_combined_geo g
+		on lc.listingkey = g.listingkey
+			and lc.sourcesystemid = g.sourcesystemid
+join
+Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.SourceSystemiD
+			where 
+	lc.PropertyType='Residential'
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('11','12','13','21','22','23','24','25','26','30','31','32','41','42','43','44','45','46','47','51','52','61','62','63','64','71','72','73','74','75','76','77','78')
+
+UNION ALL
+
+select 'CHS Tri-County' As Area,
+case  when lc.listprice &gt;= @break0_2 AND lc.listprice &lt; @break1_2 then 1
+							when lc.listprice &gt;= @break1_2 AND lc.listprice &lt; @break2_2 then 2
+							when lc.listprice &gt;= @break2_2 AND lc.listprice &lt; @break3_2 then 3
+							when lc.listprice &gt;= @break3_2 AND lc.listprice &lt; @break4_2 then 4
+							when lc.listprice &gt;= @break4_2 then 5
+							else 0 end as listpricebucket,
+lc.Rtx_LC_ID,lc.StandardStatus,lc.ListingContractDate,lc.CloseDate,lc.ExpirationDate,lc.WithdrawnDate,lc.CancelationDate,lc.ClosePrice,lc.StatusChangeTimestamp
+from listings_combined lc
+	join listings_combined_geo g
+		on lc.listingkey = g.listingkey
+			and lc.sourcesystemid = g.sourcesystemid
+join
+Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.SourceSystemiD
+			where 
+	lc.PropertyType='Residential'
+	--and m.CountyOrParrish in ('Berkeley','Dorchester','Charleston')
+	and CAST(LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) As INT) between 11 and 78
+
+
+--Base table for Solds
+select CASE 
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('11','12') THEN 'West Ashley (11-12)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('13') THEN 'Ravenel/Hollywood/Meggett (13)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('21') THEN 'James Island (21)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('22') THEN 'Folly Beach (22)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('23','24','25','26','30') THEN 'West Islands (23-26,30)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('31','32') THEN 'North Charleston (31-32)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('41','42') THEN 'Mt. Pleasant (41-42)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('43') THEN 'Sulivan''s Island (43)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('44') THEN 'Isle of Palms (44)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('45') THEN 'Wild Dunes (45)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('46','47') THEN 'Awendaw/McClellanville (46-47)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('51','52') THEN 'Downtown Charleston (51-52)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('61','62','63') THEN 'Summerville (61-63)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('64') THEN 'St. George &amp; Harleyville (64)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('72','73') THEN 'Goose Creek (72-73)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Jedburg (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('75') THEN 'Cross/St. Stephens/Bonneau (75)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('76') THEN 'Moncks Corner (76)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('77') THEN 'Daniel Island (77)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
+ELSE '' END As Area,
+datediff(day,m.ListingContractDate,m.CloseDate) As [DOM],
+lc.*
+,case
+when lc.closeprice &gt;= @break0_2 AND lc.closeprice &lt; @break1_2 then 1
+							when lc.closeprice &gt;= @break1_2 AND lc.closeprice &lt; @break2_2 then 2
+							when lc.closeprice &gt;= @break2_2 AND lc.closeprice &lt; @break3_2 then 3
+							when lc.closeprice &gt;= @break3_2 AND lc.closeprice &lt; @break4_2 then 4
+							when lc.closeprice &gt;= @break4_2 then 5
+							else 0 end as closepricebucket,
+case
+when lc.listprice &gt;= @break0_2 AND lc.listprice &lt; @break1_2 then 1
+							when lc.listprice &gt;= @break1_2 AND lc.listprice &lt; @break2_2 then 2
+							when lc.listprice &gt;= @break2_2 AND lc.listprice &lt; @break3_2 then 3
+							when lc.listprice &gt;= @break3_2 AND lc.listprice &lt; @break4_2 then 4
+							when lc.listprice &gt;= @break4_2 then 5
+							else 0 end as listpricebucket
+			INTO #cte
+			from listings_combined lc
+	join listings_combined_geo g
+		on lc.listingkey = g.listingkey
+			and lc.sourcesystemid = g.sourcesystemid
+join
+Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.SourceSystemiD
+			where 
+	lc.closedate IS NOT NULL
+	AND lc.PropertyType='Residential'
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('11','12','13','21','22','23','24','25','26','30','31','32','41','42','43','44','45','46','47','51','52','61','62','63','64','71','72','73','74','75','76','77','78')
+
+UNION ALL
+
+select 'CHS Tri-County' As Area,
+datediff(day,m.ListingContractDate,m.CloseDate) As [DOM],
+lc.*
+,case
+when lc.closeprice &gt;= @break0_2 AND lc.closeprice &lt; @break1_2 then 1
+							when lc.closeprice &gt;= @break1_2 AND lc.closeprice &lt; @break2_2 then 2
+							when lc.closeprice &gt;= @break2_2 AND lc.closeprice &lt; @break3_2 then 3
+							when lc.closeprice &gt;= @break3_2 AND lc.closeprice &lt; @break4_2 then 4
+							when lc.closeprice &gt;= @break4_2 then 5
+							else 0 end as closepricebucket,
+case
+when lc.listprice &gt;= @break0_2 AND lc.listprice &lt; @break1_2 then 1
+							when lc.listprice &gt;= @break1_2 AND lc.listprice &lt; @break2_2 then 2
+							when lc.listprice &gt;= @break2_2 AND lc.listprice &lt; @break3_2 then 3
+							when lc.listprice &gt;= @break3_2 AND lc.listprice &lt; @break4_2 then 4
+							when lc.listprice &gt;= @break4_2 then 5
+							else 0 end as listpricebucket
+			from listings_combined lc
+	join listings_combined_geo g
+		on lc.listingkey = g.listingkey
+			and lc.sourcesystemid = g.sourcesystemid
+join
+Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.SourceSystemiD
+			where 
+	lc.closedate IS NOT NULL
+	AND lc.PropertyType='Residential'
+	--and m.CountyOrParrish in ('Berkeley','Dorchester','Charleston')
+	--and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('11','12','13','21','22','23','24','25','26','30','31','32','41','42','43','44','45','46','47','51','52','61','62','63','64','71','72','73','74','75','76','77','78')
+	and CAST(LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) As INT) between 11 and 78
+
+
+--Inv by lpb
+        select 
+			area,
+			listpricebucket
+            ,Count(Rtx_LC_ID) as total_listings
+        INTO #inv
+		from #work_lci cte
+        where StandardStatus &lt;&gt; 'Coming Soon'
+                    AND (
+                        StandardStatus = 'Active' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            )
+                        OR StandardStatus = 'Active Under Contract' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            )
+                        OR StandardStatus = 'Expired' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            AND (CloseDate IS NULL OR CloseDate &gt; @eval_date)
+                                                            AND StatusChangeTimestamp&gt;@eval_date
+        ​
+                                                            )
+        ​
+                        OR StandardStatus = 'Pending' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            )
+                        OR StandardStatus = 'Closed' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            AND (coalesce(closedate, statuschangetimestamp) &gt; @eval_date)
+                                                            )
+                        OR StandardStatus = 'Withdrawn' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            AND (CloseDate IS NULL OR CloseDate &gt; @eval_date)
+                                                            AND statuschangetimestamp &gt; @eval_date
+                                                            )
+                        OR StandardStatus = 'Canceled' AND (
+                                                            ListingContractDate &lt; @eval_date
+                                                            AND (CloseDate IS NULL OR CloseDate &gt; @eval_date)
+                                                            AND statuschangetimestamp &gt; @eval_date
+                                                            )
+															)
+        GROUP BY area,listpricebucket
+
+--solds by lpb in last 6 months
+        select area,closepricebucket
+                ,Count(Rtx_LC_ID) as total_sold
+				,sum(closeprice) as total_volume_sold
+        into #solds
+		from #cte cte
+        where  CloseDate &lt; @CYEndDate
+            AND CloseDate &gt;= DATEADD(MONTH,-6,@CYEndDate)
+            AND ClosePrice &gt; 0
+        GROUP BY area,closepricebucket
+
+
+--Report Output
+select distinct
+	solds.Area,
+	solds.closepricebucket As Sort,
+	CASE WHEN solds.closepricebucket=1 THEN '$' + FORMAT(@break0_2,'#,##') + ' - $' + FORMAT(@break1_2-1,'#,##')
+	WHEN solds.closepricebucket=2 THEN '$' + FORMAT(@break1_2,'#,##') + ' - $' + FORMAT(@break2_2-1,'#,##')
+	WHEN solds.closepricebucket=3 THEN '$' +FORMAT(@break2_2,'#,##') + ' - $' + FORMAT(@break3_2-1,'#,##')
+	WHEN solds.closepricebucket=4 THEN '$' +FORMAT(@break3_2,'#,##') + ' - $' + FORMAT(@break4_2-1,'#,##')
+	WHEN solds.closepricebucket=5 THEN '$' + FORMAT(@break4_2,'#,##') + '+'
+	ELSE NULL END As ListPriceBucket
+    ,inv.total_listings As ActiveListings
+    ,solds.total_sold As Sold_Prior6Months
+from #solds solds
+left join #inv inv
+        on inv.area=solds.area and inv.listpricebucket = solds.closepricebucket
+		where solds.closepricebucket!=0
+
+UNION ALL
+
+--Fill in where solds is null and active listings &gt; 0
+select distinct
+	inv.Area,
+	inv.listpricebucket As Sort,
+	CASE WHEN inv.listpricebucket=1 THEN '$' + FORMAT(@break0_2,'#,##') + ' - $' + FORMAT(@break1_2-1,'#,##')
+	WHEN inv.listpricebucket=2 THEN '$' + FORMAT(@break1_2,'#,##') + ' - $' + FORMAT(@break2_2-1,'#,##')
+	WHEN inv.listpricebucket=3 THEN '$' +FORMAT(@break2_2,'#,##') + ' - $' + FORMAT(@break3_2-1,'#,##')
+	WHEN inv.listpricebucket=4 THEN '$' +FORMAT(@break3_2,'#,##') + ' - $' + FORMAT(@break4_2-1,'#,##')
+	WHEN inv.listpricebucket=5 THEN '$' + FORMAT(@break4_2,'#,##') + '+'
+	ELSE NULL END As ListPriceBucket
+    ,inv.total_listings As ActiveListings
+     ,solds.total_sold As Sold_Prior6Months
+from #inv inv
+left join #solds solds
+        on inv.area=solds.area and inv.listpricebucket = solds.closepricebucket
+where solds.closepricebucket is null
+and inv.listpricebucket!=0</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Area">
+          <DataField>Area</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Sort">
+          <DataField>Sort</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ListPriceBucket">
+          <DataField>ListPriceBucket</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ActiveListings">
+          <DataField>ActiveListings</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Sold_Prior6Months">
+          <DataField>Sold_Prior6Months</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
@@ -13417,7 +13712,7 @@ IIF(ReportItems!AbsorptionRate2.Value&gt;=11.5,"Pink",
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
             <PageName>="TriCounty Summary"</PageName>
-            <Top>13.69389in</Top>
+            <Top>15.49695in</Top>
             <Height>1.49167in</Height>
             <Width>6in</Width>
             <ZIndex>7</ZIndex>
@@ -13667,7 +13962,7 @@ IIF(ReportItems!AbsorptionRate2.Value&gt;=11.5,"Pink",
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TriCountySummaryPage_YTDByMonth</DataSetName>
-            <Top>15.25501in</Top>
+            <Top>17.05807in</Top>
             <Height>0.75in</Height>
             <Width>3in</Width>
             <ZIndex>8</ZIndex>
@@ -13677,8 +13972,980 @@ IIF(ReportItems!AbsorptionRate2.Value&gt;=11.5,"Pink",
               </Border>
             </Style>
           </Tablix>
+          <Tablix Name="Tablix9">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.5in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>1in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Image Name="Image18">
+                          <Source>Embedded</Source>
+                          <Value>RelitixLogo</Value>
+                          <Sizing>FitProportional</Sizing>
+                          <ZIndex>3</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Image>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox104">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Label>Title</Label>
+                                  <Value>="Luxury Market Absorption Rate for Tri-County MLS Areas"</Value>
+                                  <Style>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Label>Report Criteria</Label>
+                                  <Value>="&lt;b&gt;As of: &lt;/b&gt;" + Parameters!CYEndLabel.Value + " | Based on sales price for homes closed in prev 6 months"</Value>
+                                  <MarkupType>HTML</MarkupType>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="&lt;b&gt;Market Types: " + "Yellow&lt;/b&gt;=Sellers | &lt;b&gt;Green&lt;/b&gt;=Balanced | &lt;b&gt;Blue&lt;/b&gt;=Buyers | &lt;b&gt;Pink&lt;/b&gt;=Slow Buyers"</Value>
+                                  <MarkupType>HTML</MarkupType>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="&lt;b&gt; Run Date: &lt;/b&gt;" + CSTR(Today)</Value>
+                                  <MarkupType>HTML</MarkupType>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox35</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox216">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Area</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox203</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox217">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>List Price Bucket</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox209</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox218">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value EvaluationMode="Constant">Current Actives</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox205</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox220">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value EvaluationMode="Constant">Sold Prior 6 Mos</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox207</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox226">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="Absorption" + vbcrlf + "Rate (mos)"</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox213</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Area10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Area.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Area4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ListPriceBucket4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ListPriceBucket.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ListPriceBucket</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate3.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=5 AND ReportItems!AbsorptionRate3.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=7.5 AND ReportItems!AbsorptionRate3.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ActiveListings4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!ActiveListings.Value = Nothing, 0, Fields!ActiveListings.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ActiveListings</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate3.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=5 AND ReportItems!AbsorptionRate3.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=7.5 AND ReportItems!AbsorptionRate3.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Sold_Prior6Months4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!Sold_Prior6Months.Value = Nothing, 0, Fields!Sold_Prior6Months.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Sold_Prior6Months</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate3.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=5 AND ReportItems!AbsorptionRate3.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=7.5 AND ReportItems!AbsorptionRate3.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AbsorptionRate3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!Sold_Prior6Months.Value = Nothing Or Fields!Sold_Prior6Months.Value = 0, "NA", (6 / Fields!Sold_Prior6Months.Value) * Fields!ActiveListings.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate3.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=5 AND ReportItems!AbsorptionRate3.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=7.5 AND ReportItems!AbsorptionRate3.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate3.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.05in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox172">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox156</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox184">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox157</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox185">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox162</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox186">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox163</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox188">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox164</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Black</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Area11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="ENTIRE TRI-COUNTY AREA"</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Area4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ListPriceBucket5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ListPriceBucket.Value</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ListPriceBucket</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate4.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=5 AND ReportItems!AbsorptionRate4.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=7.5 AND ReportItems!AbsorptionRate4.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ActiveListings5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!ActiveListings.Value = Nothing, 0, Fields!ActiveListings.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ActiveListings</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate4.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=5 AND ReportItems!AbsorptionRate4.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=7.5 AND ReportItems!AbsorptionRate4.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Sold_Prior6Months5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!Sold_Prior6Months.Value = Nothing, 0, Fields!Sold_Prior6Months.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Sold_Prior6Months</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate4.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=5 AND ReportItems!AbsorptionRate4.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=7.5 AND ReportItems!AbsorptionRate4.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AbsorptionRate4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!Sold_Prior6Months.Value = Nothing Or Fields!Sold_Prior6Months.Value = 0, "NA", (6 / Fields!Sold_Prior6Months.Value) * Fields!ActiveListings.Value)</Value>
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(ReportItems!AbsorptionRate4.Value&lt;5,"Yellow",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=5 AND ReportItems!AbsorptionRate4.Value&lt;7.5,"Green",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=7.5 AND ReportItems!AbsorptionRate4.Value&lt;11.5,"Blue",
+IIF(ReportItems!AbsorptionRate4.Value&gt;=11.5,"Pink",
+"Transparent"))))</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details6">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Area.Value</GroupExpression>
+                      <GroupExpression>=Fields!ListPriceBucket.Value</GroupExpression>
+                    </GroupExpressions>
+                    <Filters>
+                      <Filter>
+                        <FilterExpression>=Fields!Area.Value</FilterExpression>
+                        <Operator>NotEqual</Operator>
+                        <FilterValues>
+                          <FilterValue>="CHS Tri-County"</FilterValue>
+                        </FilterValues>
+                      </Filter>
+                    </Filters>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=IIF(InStr(Fields!Area.Value, "(") &gt; 0, MID(MID(Fields!Area.Value, instr(Fields!Area.Value, "(") + 1), 1, 2), "98")</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!Area.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!Sort.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Area2">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Area.Value</GroupExpression>
+                      <GroupExpression>=Fields!ListPriceBucket.Value</GroupExpression>
+                    </GroupExpressions>
+                    <Filters>
+                      <Filter>
+                        <FilterExpression>=Fields!Area.Value</FilterExpression>
+                        <Operator>Equal</Operator>
+                        <FilterValues>
+                          <FilterValue>="CHS Tri-County"</FilterValue>
+                        </FilterValues>
+                      </Filter>
+                    </Filters>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!Area.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!Sort.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>AbsorptionRateLuxury</DataSetName>
+            <PageBreak>
+              <BreakLocation>Start</BreakLocation>
+            </PageBreak>
+            <PageName>="Absorption Rate Luxury"</PageName>
+            <Top>13.66917in</Top>
+            <Height>1.8in</Height>
+            <Width>7.5in</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
         </ReportItems>
-        <Height>16.00501in</Height>
+        <Height>17.80807in</Height>
         <Style />
       </Body>
       <Width>15.82084in</Width>
@@ -13967,11 +15234,61 @@ IIF(ReportItems!AbsorptionRate2.Value&gt;=11.5,"Pink",
       <Prompt>break4_1</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
+    <ReportParameter Name="break0_2">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1000000</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>break0_2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="break1_2">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1500000</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>break1_2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="break2_2">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>2500000</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>break2_2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="break3_2">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>3500000</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>break3_2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="break4_2">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>4500000</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>break4_2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
-      <NumberOfRows>9</NumberOfRows>
+      <NumberOfRows>10</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -14142,6 +15459,31 @@ IIF(ReportItems!AbsorptionRate2.Value&gt;=11.5,"Pink",
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>8</RowIndex>
           <ParameterName>break4_1</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>8</RowIndex>
+          <ParameterName>break0_2</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>8</RowIndex>
+          <ParameterName>break1_2</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>break2_2</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>break3_2</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>9</RowIndex>
+          <ParameterName>break4_2</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

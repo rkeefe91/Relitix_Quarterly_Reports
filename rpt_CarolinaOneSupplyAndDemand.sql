@@ -1,12 +1,14 @@
 USE [Relitix]
 GO
 
-/****** Object:  StoredProcedure [dbo].[rpt_CarolinaOneSupplyAndDemand]    Script Date: 5/19/2020 11:34:51 AM ******/
+/****** Object:  StoredProcedure [dbo].[rpt_CarolinaOneSupplyAndDemand]    Script Date: 7/20/2020 1:27:19 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -19,6 +21,8 @@ GO
 -- Description:	Carolina One YTD Stats - Supply and Demand Tab
 
 --Changes: 
+--6/5/2020: Added areas 74 and 78
+--7/12/2020: Changed label for Area 78 to 'Clements Ferry Road/Cainhoy'
 
 -- ==============================================================================================
 CREATE PROCEDURE [dbo].[rpt_CarolinaOneSupplyAndDemand]
@@ -95,6 +99,8 @@ WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(ar
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro (82)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','27','28') THEN 'Edisto (26-28)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Jedburg (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 case  when lc.listprice  < @break1 then 1
 							when lc.listprice >= @break1 AND lc.listprice < @break2 then 2
@@ -122,7 +128,7 @@ join
 Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.SourceSystemiD
 			where 
 	lc.PropertyType='Residential'
-	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '71', '82', '26','27','28')
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73', '71', '82', '26','27','28','74','78')
 
 UNION ALL
 
@@ -265,6 +271,8 @@ WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(ar
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('71') THEN 'Hanahan (71)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('82') THEN 'Walterboro (82)'
 WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('26','27','28') THEN 'Edisto (26-28)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('74') THEN 'Jedburg (74)'
+WHEN LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) IN ('78') THEN 'Clements Ferry Road/Cainhoy (78)'
 ELSE '' END As Area,
 datediff(day,m.ListingContractDate,m.CloseDate) As [DOM],
 lc.*
@@ -310,7 +318,7 @@ Listings_CHARLESTON m on lc.ListingKey=m.ListingKey and lc.SourceSystemID=m.Sour
 			where 
 	lc.closedate IS NOT NULL
 	AND lc.PropertyType='Residential'
-	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73','71', '82', '26','27','28')
+	and LTRIM(RTRIM(SUBSTRING(area, 1, CASE CHARINDEX('-', area) WHEN 0 THEN LEN(area) ELSE CHARINDEX('-', area) - 1 END))) in ('21', '23', '11','12', '22', '51', '41', '42', '77', '31','32', '43', '44', '45', '25', '61','62','63', '72','73','71', '82', '26','27','28','74','78')
 
 UNION ALL
 
@@ -657,6 +665,8 @@ where solds.closepricebucket is null
 
 
 END
+
+
 
 
 
